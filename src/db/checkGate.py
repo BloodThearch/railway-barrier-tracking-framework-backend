@@ -2,7 +2,6 @@ import pandas as pd
 from datetime import datetime, time
 import config
 
-
 def checkGateStatus():
     h = 6
     with open(config.BARRIER_STATUS_FILE_PATH, 'r') as file:
@@ -25,6 +24,7 @@ def checkGateStatus():
 
     return _check_crossing_status(current_date, current_time, new_df)
 
+
 def _check_crossing_status(input_date, input_time, df):
     filtered_df = df[df['Date'] == input_date]
     datetime_input = datetime.strptime(f"{input_date} {input_time}", "%Y-%m-%d %H:%M:%S")
@@ -33,5 +33,6 @@ def _check_crossing_status(input_date, input_time, df):
         time_closed=row['Datetime at which crossing were closed']
         time_opened=row['Datetime at which crossing were opened']
         if time_closed <= datetime_input <= time_opened:
-            return 0
-    return 1
+            duration = time_opened - datetime_input
+            return 0, duration
+    return 1, -1

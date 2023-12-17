@@ -91,19 +91,23 @@ def login():
 @app.route('/checkBarrier', methods = ['GET'])
 def checkBarrier():
     if (request.method == 'GET'):
-        # with open(BARRIER_STATUS_FILE_PATH, 'r') as file:
-        #     # Read the content of the file
-        #     file_content = file.read()
-        #     print(file_content)
-        #     return jsonify({'data': file_content}) 
-        if (checkGateStatus()==1): #open
+        status, duration = checkGateStatus()
+        duration_min = 0
+        if duration!=-1:
+            duration_min = int(duration.total_seconds() // 60)
+        # duration_sec = int(duration.total_seconds() % 60)
+        if (status==1): #open
             return jsonify({
                 'data': 1,
+                'duration_min': -1,
+                # 'duration_sec': duration_sec,
                 "msg": "Gate is open."
             })
         else:
             return jsonify({
                 'data': 0,
+                'duration_min': duration_min,
+                # 'duration_sec': duration_sec,
                 "msg": "Gate is closed."
             })
 
